@@ -17,6 +17,14 @@ This script is your one-stop solution 🛠️ to backing up the configuration of
 - A GitHub Personal Access Token with appropriate permissions.
 - The routers' hostnames or IP addresses.
 
+### 📦 Dependencies
+
+This script relies on several software packages to function correctly:
+
+- `curl`, `openssh-client`, `jq`, `git`
+
+All these dependencies are installed in the Docker image, so you don't need to worry about them if you're running the script in a Docker container or a Kubernetes CronJob. If you're running the script directly on your system, make sure to install these dependencies first.
+
 ## 🌍 Environment Variables
 
 The script uses the following environment variables:
