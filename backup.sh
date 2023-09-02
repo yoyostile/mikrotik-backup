@@ -4,6 +4,21 @@ set -e
 [[ -z "$GITHUB_TOKEN" ]] && { echo "Error: GITHUB_TOKEN is not set."; exit 1; }
 [[ -z "$ROUTERS" ]] && { echo "Error: ROUTERS is not set."; exit 1; }
 
+REACHABLE_ROUTERS=""
+
+for ROUTER in $ROUTERS; do
+  ping -c 1 -W 2 "$ROUTER" > /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    REACHABLE_ROUTERS="$REACHABLE_ROUTERS $ROUTER"
+  else
+    echo "Warning: ${ROUTER} is not responding to ping. Skipping."
+  fi
+done
+
+REACHABLE_ROUTERS=$(echo "$REACHABLE_ROUTERS" | sed -e 's/^ *//')
+
+[[ -z "$REACHABLE_ROUTERS" ]] && { echo "Error: No reachable routers."; exit 1; }
+
 MIKROTIK_KEY_PATH=${MIKROTIK_KEY_PATH:-~/.ssh/id_rsa}
 SHOW_SENSITIVE=${SHOW_SENSITIVE:-false}
 COMMAND='/export'
@@ -15,13 +30,7 @@ fi
 
 echo "Using ssh key from ${MIKROTIK_KEY_PATH}"
 
-for ROUTER in $ROUTERS; do
-  ping -c 1 -W 2 "$ROUTER" > /dev/null 2>&1
-  if [ $? -ne 0 ]; then
-    echo "Warning: ${ROUTER} is not responding to ping. Skipping backup."
-    continue
-  fi
-
+for ROUTER in $REACHABLE_ROUTERS; do
   echo "Backing up ${ROUTER} to ${ROUTER}.rsc..."
   ssh -i "$MIKROTIK_KEY_PATH" "$MIKROTIK_SSH_USER"@"$ROUTER" "$COMMAND" > ${ROUTER}.rsc
   sed -i '1d' ${ROUTER}.rsc
