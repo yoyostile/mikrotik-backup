@@ -8,5 +8,5 @@ WORKDIR /mikrotik-backup
 COPY backup.sh .
 
 CMD echo "$MIKROTIK_SSH_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa && \
-    for ROUTER in $ROUTERS; do ssh-keyscan -H $ROUTER >> ~/.ssh/known_hosts; done && \
+    for ROUTER in $ROUTERS; do ssh-keyscan -H $ROUTER >> ~/.ssh/known_hosts || true; done && \
     /bin/bash backup.sh
