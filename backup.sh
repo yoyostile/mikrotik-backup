@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 [[ -z "$GITHUB_TOKEN" ]] && { echo "Error: GITHUB_TOKEN is not set."; exit 1; }
 [[ -z "$ROUTERS" ]] && { echo "Error: ROUTERS is not set."; exit 1; }
