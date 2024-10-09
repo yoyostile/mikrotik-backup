@@ -1,10 +1,12 @@
 name: Build and Push Docker Image
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -37,5 +39,4 @@ jobs:
         context: .
         push: true
         tags: |
-          ${{ steps.image_name.outputs.image_name }}:latest
           ${{ steps.image_name.outputs.image_name }}:${{ github.sha }}
