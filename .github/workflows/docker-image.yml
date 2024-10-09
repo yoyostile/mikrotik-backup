@@ -29,7 +29,7 @@ jobs:
       id: image_name
       run: |
         repository=$(echo $GITHUB_REPOSITORY | tr '[A-Z]' '[a-z]')
-        echo "image_name=ghcr.io/$repository:$version" >> $GITHUB_OUTPUT
+        echo "image_name=ghcr.io/$repository" >> $GITHUB_OUTPUT
 
     - name: Build and push to repository
       uses: docker/build-push-action@v6
