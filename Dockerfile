@@ -1,6 +1,6 @@
-FROM alpine
+FROM debian:bookworm-slim
 
-RUN apk update && apk add curl bash openssh-client jq git
+RUN apt update && apt install -y curl bash openssh-client jq git iputils-ping && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p ~/.ssh && mkdir /mikrotik-backup
 WORKDIR /mikrotik-backup
