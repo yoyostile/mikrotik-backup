@@ -1,0 +1,33 @@
+steps:
+  build:
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      registry: https://ghcr.io
+      repo: ghcr.io/yoyostile/mikrotik-backup
+
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+
+      dockerfile: Dockerfile
+      context: .
+      platforms: linux/amd64
+      tags:
+        - ${CI_COMMIT_BRANCH}-${CI_COMMIT_SHA:0:8}
+        - latest
+    when:
+      branch: main
+      event: [push, manual]
+
+  build-pr:
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      dockerfile: Dockerfile
+      platforms: linux/amd64
+
+      dry_run: true
+    when:
+      branch:
+        exclude: main
+      event: [pull_request, manual, push]
