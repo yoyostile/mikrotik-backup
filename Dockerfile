@@ -1,4 +1,5 @@
 FROM debian:bookworm-slim
+LABEL org.opencontainers.image.source https://github.com/yoyostile/mikrotik-backup
 
 RUN apt update && apt install -y curl bash openssh-client jq git iputils-ping && rm -rf /var/lib/apt/lists/*
 
