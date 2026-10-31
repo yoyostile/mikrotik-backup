@@ -2,7 +2,6 @@ steps:
   build:
     image: woodpeckerci/plugin-docker-buildx
     settings:
-      mtu: 1420
       registry: https://ghcr.io
       repo: ghcr.io/yoyostile/mikrotik-backup
 
@@ -24,7 +23,6 @@ steps:
   build-pr:
     image: woodpeckerci/plugin-docker-buildx
     settings:
-      mtu: 1420
       dockerfile: Dockerfile
       platforms: linux/amd64
 
