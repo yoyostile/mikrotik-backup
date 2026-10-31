@@ -29,10 +29,22 @@ fi
 
 echo "Using ssh key from ${MIKROTIK_KEY_PATH}"
 
+FAILED=""
+
 for ROUTER in $REACHABLE_ROUTERS; do
   echo "Backing up ${ROUTER} to ${ROUTER}.rsc..."
-  ssh -i "$MIKROTIK_KEY_PATH" "$MIKROTIK_SSH_USER"@"$ROUTER" "$COMMAND" > ${ROUTER}.rsc
+  if ! ssh -i "$MIKROTIK_KEY_PATH" "$MIKROTIK_SSH_USER"@"$ROUTER" "$COMMAND" > ${ROUTER}.rsc; then
+    echo "Error: export from ${ROUTER} failed, keeping the stored backup."
+    FAILED="$FAILED $ROUTER"
+    continue
+  fi
   sed -i '1d' ${ROUTER}.rsc
+  # Never replace a stored backup with an empty export.
+  if [ ! -s "${ROUTER}.rsc" ]; then
+    echo "Error: export from ${ROUTER} is empty, keeping the stored backup."
+    FAILED="$FAILED $ROUTER"
+    continue
+  fi
 
   FILE="$ROUTER".rsc
   CONTENT=$(base64 -i "$FILE")
@@ -58,3 +70,8 @@ for ROUTER in $REACHABLE_ROUTERS; do
     rm json_payload.txt
   fi
 done
+
+if [ -n "$FAILED" ]; then
+  echo "Error: backup failed for:${FAILED}"
+  exit 1
+fi
